@@ -1,0 +1,11 @@
+extends: '../.eslintrc.yml'
+env:
+  mocha: true
+globals:
+  chai: false
+  Phaser: false
+rules:
+  no-console:
+    - warn
+    - allow:
+      - log

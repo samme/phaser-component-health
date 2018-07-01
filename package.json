@@ -1,0 +1,39 @@
+{
+  "name": "phaser-component-health",
+  "version": "0.1.0",
+  "description": "Health methods and events",
+  "main": "dist/Health.js",
+  "directories": {
+    "example": "example",
+    "test": "tests"
+  },
+  "scripts": {
+    "build": "browserify src/main.js -s PhaserHealth -o dist/Health.js",
+    "start": "watchify src/main.js -s PhaserHealth -o dist/Health.js",
+    "test": "node -c dist/Health.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samme/phaser-component-health.git"
+  },
+  "keywords": [
+    "phaser",
+    "phaser3"
+  ],
+  "author": "samme",
+  "license": "ISC",
+  "dependencies": {
+    "phaser": "^3.10.1"
+  },
+  "devDependencies": {
+    "browserify": "^16.2.2",
+    "chai": "^4.1.2",
+    "chai-spies": "^1.0.0",
+    "mocha": "^5.2.0",
+    "watchify": "^3.11.0"
+  },
+  "bugs": {
+    "url": "https://github.com/samme/phaser-component-health/issues"
+  },
+  "homepage": "https://github.com/samme/phaser-component-health#readme"
+}
