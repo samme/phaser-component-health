@@ -1,6 +1,6 @@
 {
   "name": "phaser-component-health",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Health methods and events",
   "main": "dist/Health.js",
   "directories": {
