@@ -7,22 +7,24 @@ Examples
 --------
 
 ```javascript
-// Add component to one game object
-// Also assign health 10/10
-Phaser.Health.AddTo(sprite, 10, 10);
+// Add component to *one* game object
+Phaser.Health.AddTo(sprite);
+
+// Add component and assign health 1/2
+Phaser.Health.AddTo(sprite, 1, 2);
 
 // Same:
-Phaser.Health.AddTo(sprite).setMaxHealth(10).setHealth(10);
+Phaser.Health.AddTo(sprite).setMaxHealth(2).setHealth(1);
 
 // Add component to Sprite class
 Phaser.Health.MixinTo(Phaser.GameObjects.Sprite);
 
-// Hide and deactivate sprite when dead
+// Hide and deactivate sprite when health decreases below 0
 sprite.on('die', function (spr) {
   spr.setActive(false).setVisible(false);
 });
 
-// Show and activate sprite when revived
+// Show and activate sprite when health increases above 0
 sprite.on('revive', function (spr) {
   spr.setActive(true).setVisible(true);
 });
