@@ -75,7 +75,7 @@ var Health = {
     },
 
     damage: function (amount, silent) {
-      if (amount === 0) return;
+      if (amount === 0) return this;
 
       if (!amount) amount = 1;
 
@@ -89,7 +89,7 @@ var Health = {
     },
 
     heal: function (amount, silent) {
-      if (amount === 0) return;
+      if (amount === 0) return this;
 
       if (!amount) amount = 1;
 
