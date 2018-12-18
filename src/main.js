@@ -64,11 +64,11 @@ var Health = {
       return this;
     },
 
-    setMaxHealth: function (amount) {
+    setMaxHealth: function (amount, silent) {
       this.setData(MAX_HEALTH, amount);
 
       if (this.getHealth() > amount) {
-        this.setData(HEALTH, amount); // silent
+        this.setHealth(amount, silent);
       }
 
       return this;
