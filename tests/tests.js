@@ -239,6 +239,12 @@ describe('hooks', function () {
         expect(sprite.getHealth()).equals(2);
       });
 
+      it('fires `healthchange`, passing the object, change amount, health, and maxHealth', function () {
+        var healthchange = spy();
+        sprite.setHealth(3).once('healthchange', healthchange).setMaxHealth(2);
+        expect(healthchange).is.called.with.exactly(sprite, -1, 2, 2);
+      });
+
     });
 
   });
