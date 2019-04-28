@@ -2,6 +2,20 @@ var HEALTH = 'health';
 var MAX_HEALTH = 'maxHealth';
 var DAMAGE = 'damage';
 var HEAL = 'heal';
+var HEALTH_CHANGE = 'healthchange';
+var DIE = 'die';
+var REVIVE = 'revive';
+
+var Each = Phaser.Utils.Array.Each;
+
+var dumpMap = function (obj) {
+  return {
+    name: obj.name,
+    alive: obj.isAlive(),
+    health: obj.getHealth(),
+    max: obj.getMaxHealth()
+  };
+};
 
 var Health = {
 
@@ -13,8 +27,40 @@ var Health = {
     return obj;
   },
 
+  Damage: function (obj, amount) {
+    return obj.damage(amount);
+  },
+
+  Dump: function (objs) {
+    console.table(objs.map(dumpMap));
+  },
+
+  Heal: function (obj, amount) {
+    return obj.heal(amount);
+  },
+
+  IsAlive: function (obj) {
+    return obj.isAlive();
+  },
+
+  IsDead: function (obj) {
+    return obj.isDead();
+  },
+
+  Kill: function (obj, silent) {
+    return obj.kill(silent);
+  },
+
   MixinTo: function (obj) {
     return Object.assign(obj.prototype, Health.HealthComponent);
+  },
+
+  Revive: function (obj, health, silent) {
+    return obj.revive(health, silent);
+  },
+
+  ReviveAtMaxHealth: function (obj, silent) {
+    return obj.reviveAtMaxHealth(silent);
   },
 
   SetHealth: function (obj, health, maxHealth, silent) {
@@ -25,16 +71,64 @@ var Health = {
 
   Actions: {
 
+    Damage: function (objs, amount, silent) {
+      Each(objs, Health.Damage, null, amount, silent);
+
+      return objs;
+    },
+
+    Heal: function (objs, amount, silent) {
+      Each(objs, Health.Heal, null, amount, silent);
+
+      return objs;
+    },
+
+    Kill: function (objs, silent) {
+      Each(objs, Health.Kill, null, silent);
+
+      return objs;
+    },
+
+    Revive: function (objs, health, silent) {
+      Each(objs, Health.Revive, null, health, silent);
+
+      return objs;
+    },
+
+    ReviveAtMaxHealth (objs, silent) {
+      Each(objs, Health.ReviveAtMaxHealth, null, silent);
+
+      return objs;
+    },
+
     SetHealth: function (objs, health, maxHealth, silent) {
-      Phaser.Utils.Array.Each(objs, Health.SetHealth, null, health, maxHealth, silent); // TODO
+      Each(objs, Health.SetHealth, null, health, maxHealth, silent);
+
+      return objs;
     }
 
+  },
+
+  Events: {
+    DAMAGE: DAMAGE,
+
+    DIE: DIE,
+
+    HEAL: HEAL,
+
+    HEALTH_CHANGE: HEALTH_CHANGE,
+
+    REVIVE: REVIVE
   },
 
   HealthComponent: {
 
     getHealth: function () {
       return this.getData(HEALTH);
+    },
+
+    getHealthFrac: function () {
+      return this.getHealth() / this.getMaxHealth();
     },
 
     getMaxHealth: function () {
@@ -53,12 +147,12 @@ var Health = {
 
       if (silent) return this;
 
-      this.emit('healthchange', this, change, newHealth, maxHealth);
+      this.emit(HEALTH_CHANGE, this, change, newHealth, maxHealth);
 
       if (prevHealth > 0 && newHealth <= 0) {
-        this.emit('die', this);
+        this.emit(DIE, this);
       } else if (prevHealth <= 0 && newHealth > 0) {
-        this.emit('revive', this);
+        this.emit(REVIVE, this);
       }
 
       return this;
@@ -102,6 +196,14 @@ var Health = {
       return this;
     },
 
+    isAlive: function () {
+      return this.getHealth() > 0;
+    },
+
+    isDead: function () {
+      return this.getHealth() <= 0;
+    },
+
     kill: function (silent) {
       this.setHealth(0, silent);
 
@@ -118,14 +220,6 @@ var Health = {
       this.revive(this.getMaxHealth(), silent);
 
       return this;
-    },
-
-    isAlive: function () {
-      return this.getHealth() > 0;
-    },
-
-    isDead: function () {
-      return this.getHealth() <= 0;
     }
 
   }
