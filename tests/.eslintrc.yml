@@ -9,3 +9,5 @@ rules:
     - warn
     - allow:
       - log
+      - table
+  no-unused-expressions: off
