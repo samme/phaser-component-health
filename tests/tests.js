@@ -27,7 +27,7 @@ describe('hooks', function () {
   });
 
   after('destroy game', function () {
-    Phaser.Cameras.Scene2D.Camera.prototype.clearRenderToTexture = new Function;
+    Phaser.Cameras.Scene2D.Camera.prototype.clearRenderToTexture = function () {};
     game.destroy(true, true);
     game.runDestroy();
   });
@@ -778,7 +778,6 @@ describe('hooks', function () {
           expect(sprite.getHealth()).equals(2);
         });
       });
-
     });
   });
 
