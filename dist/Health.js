@@ -206,13 +206,17 @@ var Health = {
     },
 
     kill: function (silent) {
-      this.setHealth(0, silent);
+      if (this.isAlive()) {
+        this.setHealth(0, silent);
+      }
 
       return this;
     },
 
     revive: function (health, silent) {
-      this.setHealth(health || 1, silent);
+      if (this.isDead()) {
+        this.setHealth(health || 1, silent);
+      }
 
       return this;
     },

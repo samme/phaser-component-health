@@ -727,32 +727,73 @@ describe('hooks', function () {
   });
 
   describe('Health.HealthComponent#kill()', function () {
-    it('sets health to 0', function () {
-      sprite.kill();
-      expect(sprite.getHealth()).equals(0);
+    context('when object is alive', function () {
+      it('sets health to 0', function () {
+        sprite.setHealth(1);
+        sprite.kill();
+        expect(sprite.getHealth()).equals(0);
+      });
+    });
+    context('when object is dead', function () {
+      it('does not change health', function () {
+        sprite.setHealth(-1);
+        sprite.kill();
+        expect(sprite.getHealth()).equals(-1);
+      });
     });
   });
 
   describe('Health.HealthComponent#revive()', function () {
     context('passing no amount', function () {
-      it('sets health to 1', function () {
-        sprite.revive();
-        expect(sprite.getHealth()).equals(1);
+      context('when object is alive', function () {
+        it('does not change health', function () {
+          sprite.setHealth(2);
+          sprite.revive();
+          expect(sprite.getHealth()).equals(2);
+        });
+      });
+      context('when object is dead', function () {
+        it('sets health to 1', function () {
+          sprite.kill();
+          sprite.revive();
+          expect(sprite.getHealth()).equals(1);
+        });
       });
     });
 
     context('passing an amount', function () {
-      it('sets health', function () {
-        sprite.revive(2);
-        expect(sprite.getHealth()).equals(2);
+      context('when object is alive', function () {
+        it('does not change health', function () {
+          sprite.setHealth(1);
+          sprite.revive(2);
+          expect(sprite.getHealth()).equals(1);
+        });
       });
+      context('when object is dead', function () {
+        it('sets health to the amount', function () {
+          sprite.kill();
+          sprite.revive(2);
+          expect(sprite.getHealth()).equals(2);
+        });
+      });
+
     });
   });
 
   describe('Health.HealthComponent#reviveAtMaxHealth()', function () {
-    it('sets health to maximum', function () {
-      sprite.reviveAtMaxHealth();
-      expect(sprite.getHealth()).equals(100);
+    context('when object is alive', function () {
+      it('does not change health', function () {
+        sprite.setHealth(1);
+        sprite.reviveAtMaxHealth();
+        expect(sprite.getHealth()).equals(1);
+      });
+    });
+    context('when object is dead', function () {
+      it('sets health to maximum', function () {
+        sprite.kill();
+        sprite.reviveAtMaxHealth();
+        expect(sprite.getHealth()).equals(100);
+      });
     });
   });
 });
