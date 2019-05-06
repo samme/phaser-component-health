@@ -14,7 +14,7 @@ var dumpMap = function (obj) {
     name: obj.name,
     alive: obj.isAlive(),
     health: obj.getHealth(),
-    max: obj.getMaxHealth()
+    maxHealth: obj.getMaxHealth()
   };
 };
 
