@@ -8,8 +8,8 @@
     "test": "tests"
   },
   "scripts": {
-    "build": "browserify src/main.js -s PhaserHealth -o dist/Health.js",
-    "start": "watchify src/main.js -s PhaserHealth -o dist/Health.js",
+    "build": "browserify src/main.js -s PhaserHealth -o dist/PhaserHealth.js",
+    "start": "watchify src/main.js -s PhaserHealth -o dist/PhaserHealth.js",
     "test": "node -c dist/Health.js"
   },
   "repository": {

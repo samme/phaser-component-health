@@ -1,6 +1,6 @@
 var expect = chai.expect;
 var spy = chai.spy;
-var Health = Phaser.Health;
+var Health = PhaserHealth;
 
 var game;
 var scene;
@@ -41,7 +41,7 @@ describe('hooks', function () {
     sprite.destroy();
   });
 
-  describe('Health (Phaser.Health)', function () {
+  describe('Health (PhaserHealth)', function () {
     it('is an object', function () {
       expect(Health).is.an('object');
     });

@@ -4,6 +4,7 @@ env:
 globals:
   chai: false
   Phaser: false
+  PhaserHealth: false
 rules:
   no-console:
     - warn

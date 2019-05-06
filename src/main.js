@@ -230,8 +230,4 @@ var Health = {
 
 };
 
-if ((typeof Phaser) !== 'undefined') {
-  Phaser.Health = Health;
-}
-
 module.exports = Health;
