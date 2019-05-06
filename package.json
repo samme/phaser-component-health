@@ -10,6 +10,7 @@
   "scripts": {
     "build": "browserify src/main.js -s PhaserHealth -o dist/PhaserHealth.js",
     "start": "watchify src/main.js -s PhaserHealth -o dist/PhaserHealth.js",
+    "prestart": "open tests/index.html",
     "test": "node -c dist/Health.js"
   },
   "repository": {
