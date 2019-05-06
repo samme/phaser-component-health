@@ -8,16 +8,16 @@ Examples
 
 ```javascript
 // Add component to one game object
-Phaser.Health.AddTo(sprite);
+PhaserHealth.AddTo(sprite);
 
 // Add component to one game object and assign health 1 and max health 2
-Phaser.Health.AddTo(sprite, 1, 2);
+PhaserHealth.AddTo(sprite, 1, 2);
 
 // Same:
-Phaser.Health.AddTo(sprite).setMaxHealth(2).setHealth(1);
+PhaserHealth.AddTo(sprite).setMaxHealth(2).setHealth(1);
 
 // Add component to Sprite class
-Phaser.Health.MixinTo(Phaser.GameObjects.Sprite);
+PhaserHealth.MixinTo(Phaser.GameObjects.Sprite);
 
 // Hide and deactivate sprite when health decreases below 0
 sprite.on('die', function (spr) {
@@ -43,15 +43,15 @@ Open [tests](./tests/index.html) in your browser.
 Static Methods
 --------------
 
-- Phaser.Health.AddTo(obj, health=1, maxHealth=100) → obj
-- Phaser.Health.Damage(obj, amount=1, silent=false) → obj
-- Phaser.Health.Dump(objs) → undefined
-- Phaser.Health.Heal(obj, amount=1, silent=false) → obj
-- Phaser.Health.Kill(obj, silent=false) → obj
-- Phaser.Health.MixinTo(class) → class
-- Phaser.Health.Revive(obj, health=1, silent=false) → obj
-- Phaser.Health.ReviveAtMaxHealth(obj, silent=false) → obj
-- Phaser.Health.SetHealth(obj, health, maxHealth, silent=false) → obj
+- PhaserHealth.AddTo(obj, health=1, maxHealth=100) → obj
+- PhaserHealth.Damage(obj, amount=1, silent=false) → obj
+- PhaserHealth.Dump(objs) → undefined
+- PhaserHealth.Heal(obj, amount=1, silent=false) → obj
+- PhaserHealth.Kill(obj, silent=false) → obj
+- PhaserHealth.MixinTo(class) → class
+- PhaserHealth.Revive(obj, health=1, silent=false) → obj
+- PhaserHealth.ReviveAtMaxHealth(obj, silent=false) → obj
+- PhaserHealth.SetHealth(obj, health, maxHealth, silent=false) → obj
 
 Actions
 -------
@@ -87,8 +87,8 @@ Events
 
 These are also named as
 
-- Phaser.Health.Events.DAMAGE
-- Phaser.Health.Events.DIE
-- Phaser.Health.Events.HEAL
-- Phaser.Health.Events.HEALTH_CHANGE
-- Phaser.Health.Events.REVIVE
+- PhaserHealth.Events.DAMAGE
+- PhaserHealth.Events.DIE
+- PhaserHealth.Events.HEAL
+- PhaserHealth.Events.HEALTH_CHANGE
+- PhaserHealth.Events.REVIVE
