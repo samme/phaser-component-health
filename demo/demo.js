@@ -1,4 +1,4 @@
-var Health = Phaser.Health;
+var Health = PhaserHealth;
 
 var Shuffle = Phaser.Utils.Array.Shuffle;
 
