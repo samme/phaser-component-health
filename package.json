@@ -2,7 +2,7 @@
   "name": "phaser-component-health",
   "version": "1.2.0",
   "description": "Health methods and events",
-  "main": "dist/Health.js",
+  "main": "dist/PhaserHealth.js",
   "directories": {
     "example": "example",
     "test": "tests"
@@ -11,7 +11,7 @@
     "build": "browserify src/main.js -s PhaserHealth -o dist/PhaserHealth.js",
     "start": "watchify src/main.js -s PhaserHealth -o dist/PhaserHealth.js",
     "prestart": "open tests/index.html",
-    "test": "node -c dist/Health.js"
+    "test": "node -c dist/PhaserHealth.js"
   },
   "repository": {
     "type": "git",
