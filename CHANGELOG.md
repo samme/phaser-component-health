@@ -1,3 +1,11 @@
+2.0.0
+-----
+
+- Renamed main script to `dist/PhaserHealth.js`.
+- Removed `Phaser.Health`. Use `PhaserHealth` global instead (or the default export).
+- Kill methods now affect only living targets.
+- Revive methods now affect only dead targets.
+
 1.2.0
 -----
 
