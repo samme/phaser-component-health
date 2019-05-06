@@ -202,18 +202,28 @@ var Logger = {
     elf.on('healthchange', this.logHealthChange, this);
     elf.on('die', this.logDeath, this);
     elf.on('revive', this.logRevive, this);
+    elf.on('damage', this.logDamage, this);
+    elf.on('heal', this.logHeal, this);
   },
 
-  logHealthChange: function (elf, change) {
-    console.log(elf.name, change);
+  logHealthChange: function (elf, amount) {
+    console.log('healthchange', elf.name, amount);
   },
 
   logDeath: function (elf) {
-    console.log(elf.name, 'died');
+    console.log('die', elf.name);
   },
 
   logRevive: function (elf) {
-    console.log(elf.name, 'was resurrected');
+    console.log('revive', elf.name);
+  },
+
+  logDamage: function (elf, amount) {
+    console.log('damage', elf.name, amount);
+  },
+
+  logHeal: function (elf, amount) {
+    console.log('heal', elf.name, amount);
   }
 };
 
@@ -308,25 +318,20 @@ function create () {
   blues.forEach(addElf);
   greens.forEach(addElf);
 
-  console.table(blues.map(mapTable));
-  console.table(greens.map(mapTable));
+  console.info('Blue Elves:');
+
+  Health.Dump(blues);
+
+  console.info('Green Elves:');
+
+  Health.Dump(greens);
 }
 
 function addElf (elf) {
   Counter.add(elf);
   Logger.add(elf);
-  Tinter.add(elf);
   Texter.add(elf);
-}
-
-function mapTable (elf) {
-  return {
-    name: elf.name,
-    color: elf.color,
-    alive: elf.isAlive(),
-    health: elf.getHealth(),
-    maxHealth: elf.getMaxHealth()
-  };
+  Tinter.add(elf);
 }
 
 function getGreen () {
