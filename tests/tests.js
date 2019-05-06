@@ -27,7 +27,9 @@ describe('hooks', function () {
   });
 
   after('destroy game', function () {
-    game.destroy();
+    Phaser.Cameras.Scene2D.Camera.prototype.clearRenderToTexture = new Function;
+    game.destroy(true, true);
+    game.runDestroy();
   });
 
   beforeEach('create sprite and add health', function () {
@@ -711,7 +713,7 @@ describe('hooks', function () {
       });
     });
 
-    context('passing silent true', function () {
+    context('passing silent = true', function () {
       it('does not fire `heal`', function () {
         var heal = spy();
         sprite.once('heal', heal).heal(1, true);
