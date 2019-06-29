@@ -1,3 +1,9 @@
+2.0.1
+-----
+
+- Fixed missing `silent` argument in PhaserHealth.Damage().
+- Fixed missing `silent` argument in PhaserHealth.Heal().
+
 2.0.0
 -----
 
