@@ -28,16 +28,16 @@ var Health = {
     return obj;
   },
 
-  Damage: function (obj, amount) {
-    return obj.damage(amount);
+  Damage: function (obj, amount, silent) {
+    return obj.damage(amount, silent);
   },
 
   Dump: function (objs) {
     console.table(objs.map(dumpMap));
   },
 
-  Heal: function (obj, amount) {
-    return obj.heal(amount);
+  Heal: function (obj, amount, silent) {
+    return obj.heal(amount, silent);
   },
 
   IsAlive: function (obj) {
