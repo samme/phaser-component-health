@@ -97,7 +97,7 @@ describe('hooks', function () {
           setDataEnabled: Phaser.GameObjects.GameObject.prototype.setDataEnabled
         };
 
-        thing.data = new Phaser.Data.DataManager(thing);
+        thing.data = new Phaser.Data.DataManager(thing, thing.events);
 
         Health.AddTo(thing);
 
@@ -229,7 +229,7 @@ describe('hooks', function () {
       it('adds the component methods to the class', function () {
         var Thing = function () {
           this.events = new Phaser.Events.EventEmitter();
-          this.data = new Phaser.Data.DataManager(this);
+          this.data = new Phaser.Data.DataManager(this, this.events);
         };
 
         Object.assign(Thing.prototype, {
