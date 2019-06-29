@@ -67,11 +67,11 @@ Instance Methods
 ----------------
 
 - damage(amount=1, silent=false) → this
-- getHealth() → amount
-- getMaxHealth() → amount
+- getHealth() → number
+- getMaxHealth() → number
 - heal(amount=1, silent=false) → this
-- isAlive() → boolean
-- isDead() → boolean
+- isAlive() → true | false
+- isDead() → true | false
 - kill(silent=false) → this
 - revive(health=1, silent=false) → this
 - reviveAtMaxHealth(silent=false) → this
