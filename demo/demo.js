@@ -276,8 +276,8 @@ var config = {
 var blues = [];
 var greens = [];
 
-var bluesAlive = 4;
-var greensAlive = 4;
+var bluesAlive;
+var greensAlive;
 
 new Phaser.Game(config);
 
@@ -314,6 +314,9 @@ function create () {
   greens.push(new GreenElf(this, 670, 488).setName('Alre'));
   greens.push(new GreenElf(this, 780, 485).setName('Akkar'));
   greens.push(new GreenElf(this, 890, 484).setName('Riluaneth'));
+
+  bluesAlive = blues.length;
+  greensAlive = greens.length;
 
   blues.forEach(addElf);
   greens.forEach(addElf);
