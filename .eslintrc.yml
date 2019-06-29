@@ -1,6 +1,8 @@
 extends: 'semistandard'
 env:
   browser: true
+globals:
+  Phaser: false
 rules:
   no-console:
     - warn
