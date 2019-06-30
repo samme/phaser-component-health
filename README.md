@@ -35,6 +35,8 @@ sprite.on('healthchange', function (spr, amount, health, maxHealth) {
 });
 ```
 
+See the [demo](./demo/) as well.
+
 Tests
 -----
 
