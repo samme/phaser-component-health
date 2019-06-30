@@ -1,14 +1,8 @@
-var Health = PhaserHealth;
-
-var Shuffle = Phaser.Utils.Array.Shuffle;
-
-var RED = 0xff3300;
-
 var BLUE = 0x00ffff;
-
-var GREEN = 0x33ff00;
-
-// var YELLOW = 0xffff00;
+var GREEN = 0x22ff00;
+var RED = 0xff2200;
+var Health = PhaserHealth;
+var Shuffle = Phaser.Utils.Array.Shuffle;
 
 class HealthBar {
   constructor (scene, x, y, width, height) {
@@ -80,7 +74,7 @@ class Elf extends Phaser.GameObjects.Sprite {
   }
 
   animComplete (animation) {
-    if (animation.key === this.color + 'Attack') {
+    if (animation.key === (this.color + 'Attack')) {
       this.play(this.color + 'Idle');
     }
   }
@@ -159,6 +153,10 @@ class GreenElf extends Elf {
 Health.MixinTo(Elf);
 
 var Counter = {
+  blue: 0,
+
+  green: 0,
+
   text: null,
 
   add: function (elf) {
@@ -167,33 +165,19 @@ var Counter = {
   },
 
   countDeath: function (elf) {
-    switch (elf.color) {
-      case 'blue':
-        bluesAlive--;
-        break;
-      case 'green':
-        greensAlive--;
-        break;
-    }
+    this[elf.color]--;
 
     this.drawCount();
   },
 
   countRevive: function (elf) {
-    switch (elf.color) {
-      case 'blue':
-        bluesAlive++;
-        break;
-      case 'green':
-        greensAlive++;
-        break;
-    }
+    this[elf.color]++;
 
     this.drawCount();
   },
 
   drawCount: function () {
-    this.text.setText(`Blue: ${bluesAlive} Green: ${greensAlive}`);
+    this.text.setText(`Blue: ${this.blue} Green: ${this.green}`);
   }
 };
 
@@ -250,15 +234,15 @@ var Tinter = {
 
   tintDamage: function (elf) {
     elf.setTint(RED);
-    this.clearTint(elf);
+    this.scheduleClearTint(elf);
   },
 
   tintHeal: function (elf) {
     elf.setTint(BLUE);
-    this.clearTint(elf);
+    this.scheduleClearTint(elf);
   },
 
-  clearTint: function (elf) {
+  scheduleClearTint: function (elf) {
     elf.scene.time.addEvent({ delay: 200, callback: elf.clearTint, callbackScope: elf });
   }
 };
@@ -276,9 +260,7 @@ var config = {
 var blues = [];
 var greens = [];
 
-var bluesAlive;
-var greensAlive;
-
+// eslint-disable-next-line no-new
 new Phaser.Game(config);
 
 function preload () {
@@ -301,7 +283,6 @@ function create () {
   this.add.image(0, 0, 'background').setOrigin(0).setAlpha(0.5);
 
   Counter.text = this.add.text(10, 10, '', { font: '24px sans-serif' });
-  Counter.drawCount();
 
   Texter.text = this.add.text(0, 0, '', { font: '48px sans-serif' });
 
@@ -315,8 +296,9 @@ function create () {
   greens.push(new GreenElf(this, 780, 485).setName('Akkar'));
   greens.push(new GreenElf(this, 890, 484).setName('Riluaneth'));
 
-  bluesAlive = blues.length;
-  greensAlive = greens.length;
+  Counter.blue = blues.length;
+  Counter.green = greens.length;
+  Counter.drawCount();
 
   blues.forEach(addElf);
   greens.forEach(addElf);
@@ -337,14 +319,14 @@ function addElf (elf) {
   Tinter.add(elf);
 }
 
-function getGreen () {
-  if (!greensAlive) return false;
+function getRandomAlive (objs) {
+  return Shuffle(objs.filter(Health.IsAlive))[0] || null;
+}
 
-  return Shuffle(greens.filter(Health.IsAlive))[0] || false;
+function getGreen () {
+  return getRandomAlive(greens);
 }
 
 function getBlue () {
-  if (!bluesAlive) return false;
-
-  return Shuffle(blues.filter(Health.IsAlive))[0] || false;
+  return getRandomAlive(blues);
 }
