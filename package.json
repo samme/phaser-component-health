@@ -24,15 +24,17 @@
   ],
   "author": "samme",
   "license": "ISC",
-  "dependencies": {
-    "phaser": "^3.16.2"
-  },
+  "dependencies": {},
   "devDependencies": {
     "browserify": "^16.2.3",
     "chai": "^4.2.0",
     "chai-spies": "^1.0.0",
     "mocha": "^5.2.0",
+    "phaser": "^3.19.0",
     "watchify": "^3.11.1"
+  },
+  "peerDependencies": {
+    "phaser": "^3.16.2"
   },
   "bugs": {
     "url": "https://github.com/samme/phaser-component-health/issues"
