@@ -8,6 +8,22 @@ var sprite;
 
 mocha.setup('bdd');
 
+describe('Phaser', function () {
+  it('is an object', function () {
+    expect(Phaser).is.an('object');
+  });
+
+  it('is version 3.22.0', function () {
+    expect(Phaser).has.property('VERSION', '3.22.0');
+  });
+});
+
+describe('PhaserHealth', function () {
+  it('is an object', function () {
+    expect(PhaserHealth).is.an('object');
+  });
+});
+
 describe('hooks', function () {
   before('create game', function (done) {
     game = new Phaser.Game({
@@ -38,22 +54,6 @@ describe('hooks', function () {
 
   afterEach('destroy sprite', function () {
     sprite.destroy();
-  });
-
-  describe('Phaser', function () {
-    it('is an object', function () {
-      expect(Phaser).is.an('object');
-    });
-
-    it('is version 3.22.0', function () {
-      expect(Phaser).has.property('VERSION', '3.22.0');
-    });
-  })
-
-  describe('Health (PhaserHealth)', function () {
-    it('is an object', function () {
-      expect(Health).is.an('object');
-    });
   });
 
   describe('Health.AddTo()', function () {
