@@ -1,8 +1,14 @@
-extends: 'semistandard'
+extends: semistandard
 env:
   browser: true
+  commonjs: true
+  es6: true
 globals:
-  Phaser: false
+  Atomics: readonly
+  SharedArrayBuffer: readonly
+  Phaser: readonly
+parserOptions:
+  ecmaVersion: 2018
 rules:
   no-console:
     - warn
