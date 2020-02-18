@@ -33,9 +33,15 @@ sprite.on('revive', function (spr) {
 sprite.on('healthchange', function (spr, amount, health, maxHealth) {
   // Health changed by ${amount}, now ${health}/${maxHealth}
 });
+
+// Modify sprite health
+sprite.damage(1);
+sprite.heal(2);
+sprite.kill();
+sprite.revive();
 ```
 
-See the [demo](./demo/) as well.
+See the [demo](./demo/index.html) as well.
 
 Tests
 -----
@@ -70,6 +76,7 @@ Instance Methods
 
 - damage(amount=1, silent=false) → this
 - getHealth() → number
+- getHealthFrac() → number
 - getMaxHealth() → number
 - heal(amount=1, silent=false) → this
 - isAlive() → true | false
