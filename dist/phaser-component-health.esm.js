@@ -1,4 +1,3 @@
-(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.PhaserHealth = f()}})(function(){var define,module,exports;return (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 var HEALTH = 'health';
 var MAX_HEALTH = 'maxHealth';
 var DAMAGE = 'damage';
@@ -65,7 +64,7 @@ var Health = {
   },
 
   SetHealth: function (obj, health, maxHealth, silent) {
-    if (maxHealth) obj.setMaxHealth(maxHealth);
+    if (maxHealth) { obj.setMaxHealth(maxHealth); }
 
     return obj.setHealth(health, silent);
   },
@@ -96,7 +95,7 @@ var Health = {
       return objs;
     },
 
-    ReviveAtMaxHealth (objs, silent) {
+    ReviveAtMaxHealth: function ReviveAtMaxHealth (objs, silent) {
       Each(objs, Health.ReviveAtMaxHealth, null, silent);
 
       return objs;
@@ -142,11 +141,11 @@ var Health = {
       var newHealth = Math.min(health, maxHealth);
       var change = newHealth - prevHealth;
 
-      if (change === 0) return this;
+      if (change === 0) { return this; }
 
       this.setData(HEALTH, newHealth);
 
-      if (silent) return this;
+      if (silent) { return this; }
 
       this.emit(HEALTH_CHANGE, this, change, newHealth, maxHealth);
 
@@ -170,9 +169,9 @@ var Health = {
     },
 
     damage: function (amount, silent) {
-      if (amount === 0) return this;
+      if (amount === 0) { return this; }
 
-      if (!amount) amount = 1;
+      if (!amount) { amount = 1; }
 
       if (!silent) {
         this.emit(DAMAGE, this, amount);
@@ -184,9 +183,9 @@ var Health = {
     },
 
     heal: function (amount, silent) {
-      if (amount === 0) return this;
+      if (amount === 0) { return this; }
 
-      if (!amount) amount = 1;
+      if (!amount) { amount = 1; }
 
       if (!silent) {
         this.emit(HEAL, this, amount);
@@ -231,7 +230,6 @@ var Health = {
 
 };
 
-module.exports = Health;
+var main = Health;
 
-},{}]},{},[1])(1)
-});
+export default main;
