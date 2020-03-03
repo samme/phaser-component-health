@@ -26,7 +26,7 @@ export default [
     plugins: [
       resolve(),
       commonjs(),
-      buble({ exclude: ['node_modules/**'] })
+      buble({ exclude: ['node_modules/**'], objectAssign: 'Object.assign' })
     ]
   }
 ];
