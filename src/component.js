@@ -13,10 +13,10 @@ export const getMaxHealth = function () {
 };
 
 export const setHealth = function (health, silent) {
-  var maxHealth = this.getMaxHealth();
-  var prevHealth = this.getHealth();
-  var newHealth = Math.min(health, maxHealth);
-  var change = newHealth - prevHealth;
+  const maxHealth = this.getMaxHealth();
+  const prevHealth = this.getHealth();
+  const newHealth = Math.min(health, maxHealth);
+  const change = newHealth - prevHealth;
 
   if (change === 0) return this;
 
