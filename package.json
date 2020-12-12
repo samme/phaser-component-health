@@ -6,7 +6,8 @@
   "module": "dist/phaser-component-health.esm.js",
   "browser": "dist/phaser-component-health.umd.js",
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "scripts": {
     "build": "rollup -c",
