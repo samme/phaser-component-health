@@ -3,10 +3,10 @@ import * as HealthComponent from './component';
 
 import { dumpMap } from './dumpMap';
 
-export const AddTo = function (obj, health, maxHealth) {
+export const AddTo = function (obj, health = 1, minHealth = -Infinity, maxHealth = 100) {
   Object.assign(obj, HealthComponent);
 
-  SetHealth(obj, health || 1, maxHealth || 100, true);
+  SetHealth(obj, health, minHealth, maxHealth, true);
 
   return obj;
 };
@@ -47,8 +47,6 @@ export const ReviveAtMaxHealth = function (obj, silent) {
   return obj.reviveAtMaxHealth(silent);
 };
 
-export const SetHealth = function (obj, health, maxHealth, silent) {
-  if (maxHealth) obj.setMaxHealth(maxHealth);
-
-  return obj.setHealth(health, silent);
+export const SetHealth = function (obj, health, minHealth, maxHealth, silent) {
+  return obj.setHealth(health, minHealth, maxHealth, silent);
 };
