@@ -6,7 +6,11 @@ var game;
 var scene;
 var sprite;
 
-mocha.setup('bdd');
+mocha.setup({
+  allowUncaught: true,
+  bail: true,
+  ui: 'bdd'
+});
 
 describe('Phaser', function () {
   it('is an object', function () {
@@ -47,7 +51,7 @@ describe('hooks', function () {
     game.runDestroy();
   });
 
-  beforeEach('create sprite and add health', function () {
+  beforeEach('create sprite and add health component', function () {
     sprite = scene.add.sprite();
     Health.AddTo(sprite);
   });
@@ -56,19 +60,23 @@ describe('hooks', function () {
     sprite.destroy();
   });
 
-  describe('Health.AddTo()', function () {
+  describe('AddTo()', function () {
     context('passing a game object', function () {
       it('adds the component methods to the object', function () {
         expect(sprite)
           .respondsTo('damage').and
           .respondsTo('getHealth').and
+          .respondsTo('getHealthFrac').and
+          .respondsTo('getMaxHealth').and
+          .respondsTo('getMinHealth').and
           .respondsTo('heal').and
           .respondsTo('isAlive').and
           .respondsTo('isDead').and
           .respondsTo('revive').and
           .respondsTo('reviveAtMaxHealth').and
           .respondsTo('setHealth').and
-          .respondsTo('setMaxHealth');
+          .respondsTo('setMaxHealth').and
+          .respondsTo('setMinHealth');
       });
 
       context('passing no health', function () {
@@ -76,21 +84,42 @@ describe('hooks', function () {
           expect(sprite.getHealth()).equals(1);
         });
 
+        it('sets minHealth to -Infinity', function () {
+          expect(sprite.getMinHealth()).equals(-Infinity);
+        });
+
         it('sets maxHealth to 100', function () {
           expect(sprite.getMaxHealth()).equals(100);
         });
       });
 
-      context('passing health', function () {
+      context('passing health (only)', function () {
         it('sets health', function () {
           Health.AddTo(sprite, 2);
           expect(sprite.getHealth()).equals(2);
+        });
+
+        it('sets minHealth to -Infinity', function () {
+          Health.AddTo(sprite, 2);
+          expect(sprite.getMinHealth()).equals(-Infinity);
+        });
+
+        it('sets maxHealth to 100', function () {
+          Health.AddTo(sprite, 2);
+          expect(sprite.getMaxHealth()).equals(100);
+        });
+      });
+
+      context('passing minHealth', function () {
+        it('sets minHealth', function () {
+          Health.AddTo(sprite, 2, 0);
+          expect(sprite.getMinHealth()).equals(0);
         });
       });
 
       context('passing maxHealth', function () {
         it('sets maxHealth', function () {
-          Health.AddTo(sprite, 2, 3);
+          Health.AddTo(sprite, 2, undefined, 3);
           expect(sprite.getMaxHealth()).equals(3);
         });
       });
@@ -100,31 +129,79 @@ describe('hooks', function () {
       it('adds the component methods to the object', function () {
         var thing = {
           data: null,
-          events: new Phaser.Events.EventEmitter(),
           getData: Phaser.GameObjects.GameObject.prototype.getData,
           setData: Phaser.GameObjects.GameObject.prototype.setData,
           setDataEnabled: Phaser.GameObjects.GameObject.prototype.setDataEnabled
         };
 
-        thing.data = new Phaser.Data.DataManager(thing, thing.events);
+        Object.assign(thing, Object.getPrototypeOf(Phaser.Events.EventEmitter.prototype));
+
+        Phaser.Events.EventEmitter.call(thing);
+
+        thing.data = new Phaser.Data.DataManager(thing);
 
         Health.AddTo(thing);
 
         expect(thing)
           .respondsTo('damage').and
           .respondsTo('getHealth').and
+          .respondsTo('getHealthFrac').and
+          .respondsTo('getMaxHealth').and
+          .respondsTo('getMinHealth').and
           .respondsTo('heal').and
           .respondsTo('isAlive').and
           .respondsTo('isDead').and
           .respondsTo('revive').and
           .respondsTo('reviveAtMaxHealth').and
           .respondsTo('setHealth').and
-          .respondsTo('setMaxHealth');
+          .respondsTo('setMaxHealth').and
+          .respondsTo('setMinHealth');
+      });
+    });
+
+    context('passing an object (custom implementation)', function () {
+      it('adds the component methods to the object', function () {
+        // eslint-disable-next-line no-new-func
+        var noop = new Function();
+        var thing = {
+          data: new Map(),
+          emit: noop,
+          off: noop,
+          on: noop,
+          once: noop,
+          getData: function (key) {
+            return this.data.get(key);
+          },
+          setData: function (key, val) {
+            return this.data.set(key, val);
+          },
+          setDataEnabled: noop
+        };
+
+        Health.AddTo(thing);
+
+        expect(thing)
+          .respondsTo('damage').and
+          .respondsTo('getHealth').and
+          .respondsTo('getHealthFrac').and
+          .respondsTo('getMaxHealth').and
+          .respondsTo('getMinHealth').and
+          .respondsTo('heal').and
+          .respondsTo('isAlive').and
+          .respondsTo('isDead').and
+          .respondsTo('revive').and
+          .respondsTo('reviveAtMaxHealth').and
+          .respondsTo('setHealth').and
+          .respondsTo('setMaxHealth').and
+          .respondsTo('setMinHealth');
+
+        thing.setHealth(2);
+        expect(thing.getHealth()).equals(2);
       });
     });
   });
 
-  describe('Health.Dump()', function () {
+  describe('Dump()', function () {
     it('prints to console (without error)', function () {
       expect(function () {
         Health.Dump([sprite]);
@@ -132,7 +209,7 @@ describe('hooks', function () {
     });
   });
 
-  describe('Health.Damage()', function () {
+  describe('Damage()', function () {
     context('passing no amount', function () {
       it('decreases the target’s health by 1', function () {
         expect(function () {
@@ -154,7 +231,7 @@ describe('hooks', function () {
     });
   });
 
-  describe('Health.Heal()', function () {
+  describe('Heal()', function () {
     context('passing no amount', function () {
       it('increases the target’s health by 1', function () {
         expect(function () {
@@ -180,7 +257,7 @@ describe('hooks', function () {
     });
   });
 
-  describe('Health.IsAlive()', function () {
+  describe('IsAlive()', function () {
     context('when health > 0', function () {
       it('returns true', function () {
         sprite.setHealth(1);
@@ -203,7 +280,7 @@ describe('hooks', function () {
     });
   });
 
-  describe('Health.IsDead()', function () {
+  describe('IsDead()', function () {
     context('when health > 0', function () {
       it('returns false', function () {
         sprite.setHealth(1);
@@ -226,14 +303,14 @@ describe('hooks', function () {
     });
   });
 
-  describe('Health.Kill()', function () {
+  describe('Kill()', function () {
     it('changes the target’s health to 0', function () {
       Health.Kill(sprite);
       expect(sprite.getHealth()).to.equal(0);
     });
   });
 
-  describe('Health.MixinTo()', function () {
+  describe('MixinTo()', function () {
     context('passing a class', function () {
       it('adds the component methods to the class', function () {
         var Thing = function () {
@@ -263,7 +340,7 @@ describe('hooks', function () {
     });
   });
 
-  describe('Health.Revive()', function () {
+  describe('Revive()', function () {
     context('passing no amount', function () {
       it('sets the target’s health to 1', function () {
         sprite.setHealth(0);
@@ -283,7 +360,7 @@ describe('hooks', function () {
     });
   });
 
-  describe('Health.ReviveAtMaxHealth()', function () {
+  describe('ReviveAtMaxHealth()', function () {
     it('sets the target’s health to its maximum', function () {
       sprite.setHealth(0);
       expect(sprite.getHealth()).equals(0);
@@ -292,7 +369,7 @@ describe('hooks', function () {
     });
   });
 
-  describe('Health.Actions.Damage()', function () {
+  describe('Actions.Damage()', function () {
     context('passing no amount', function () {
       it('decreases each target’s health by 1', function () {
         expect(function () {
@@ -318,7 +395,7 @@ describe('hooks', function () {
     });
   });
 
-  describe('Health.Actions.Heal()', function () {
+  describe('Actions.Heal()', function () {
     context('passing no amount', function () {
       it('increases each target’s health by 1', function () {
         expect(function () {
@@ -344,14 +421,14 @@ describe('hooks', function () {
     });
   });
 
-  describe('Health.Actions.Kill()', function () {
+  describe('Actions.Kill()', function () {
     it('changes each target’s health to 0', function () {
       Health.Actions.Kill([sprite]);
       expect(sprite.getHealth()).to.equal(0);
     });
   });
 
-  describe('Health.Actions.Revive()', function () {
+  describe('Actions.Revive()', function () {
     context('passing no amount', function () {
       it('sets each target’s health to 1', function () {
         sprite.setHealth(0);
@@ -371,7 +448,7 @@ describe('hooks', function () {
     });
   });
 
-  describe('Health.Actions.ReviveAtMaxHealth()', function () {
+  describe('Actions.ReviveAtMaxHealth()', function () {
     it('sets the target’s health to its maximum', function () {
       sprite.setHealth(0);
       expect(sprite.getHealth()).equals(0);
@@ -380,7 +457,7 @@ describe('hooks', function () {
     });
   });
 
-  describe('Health.Actions.SetHealth()', function () {
+  describe('Actions.SetHealth()', function () {
     context('passing health', function () {
       it('sets the health of each object', function () {
         sprite.setHealth(1);
@@ -389,52 +466,60 @@ describe('hooks', function () {
       });
     });
 
+    context('passing minHealth', function () {
+      it('sets the minHealth of each object', function () {
+        sprite.setMinHealth(-10);
+        Health.Actions.SetHealth([sprite], 1, 0, 4);
+        expect(sprite.getMinHealth()).equals(0);
+      });
+    });
+
     context('passing maxHealth', function () {
       it('sets the maxHealth of each object', function () {
         sprite.setMaxHealth(3);
-        Health.Actions.SetHealth([sprite], 1, 4);
+        Health.Actions.SetHealth([sprite], 1, undefined, 4);
         expect(sprite.getMaxHealth()).equals(4);
       });
     });
   });
 
-  describe('Health.Events.DAMAGE', function () {
+  describe('Events.DAMAGE', function () {
     it('is `damage`', function () {
       expect(Health.Events.DAMAGE).equals('damage');
     });
   });
 
-  describe('Health.Events.DIE', function () {
+  describe('Events.DIE', function () {
     it('is `die`', function () {
       expect(Health.Events.DIE).equals('die');
     });
   });
 
-  describe('Health.Events.HEAL', function () {
+  describe('Events.HEAL', function () {
     it('is `heal`', function () {
       expect(Health.Events.HEAL).equals('heal');
     });
   });
 
-  describe('Health.Events.HEALTH_CHANGE', function () {
+  describe('Events.HEALTH_CHANGE', function () {
     it('is `healthchange`', function () {
       expect(Health.Events.HEALTH_CHANGE).equals('healthchange');
     });
   });
 
-  describe('Health.Events.REVIVE', function () {
+  describe('Events.REVIVE', function () {
     it('is `revive`', function () {
       expect(Health.Events.REVIVE).equals('revive');
     });
   });
 
-  describe('Health.HealthComponent#getHealth()', function () {
+  describe('getHealth()', function () {
     it('returns health', function () {
       expect(sprite.getHealth()).equals(1);
     });
   });
 
-  describe('Health.HealthComponent#getHealthFrac()', function () {
+  describe('getHealthFrac()', function () {
     it('returns (health / maxHealth)', function () {
       sprite.setMaxHealth(100);
       sprite.setHealth(100);
@@ -448,13 +533,13 @@ describe('hooks', function () {
     });
   });
 
-  describe('Health.HealthComponent#getMaxHealth()', function () {
+  describe('getMaxHealth()', function () {
     it('returns maxHealth', function () {
       expect(sprite.getMaxHealth()).equals(100);
     });
   });
 
-  describe('Health.HealthComponent#isAlive()', function () {
+  describe('isAlive()', function () {
     context('when health > 0', function () {
       it('returns true', function () {
         sprite.setHealth(1);
@@ -477,7 +562,7 @@ describe('hooks', function () {
     });
   });
 
-  describe('Health.HealthComponent#isDead()', function () {
+  describe('isDead()', function () {
     context('when health > 0', function () {
       it('returns false', function () {
         expect(sprite.isDead()).is.false;
@@ -499,30 +584,43 @@ describe('hooks', function () {
     });
   });
 
-  describe('Health.HealthComponent#setHealth()', function () {
+  describe('setHealth()', function () {
     context('passing health amount', function () {
       it('sets health', function () {
         sprite.setHealth(2);
         expect(sprite.getHealth()).equals(2);
       });
 
-      it('fires `healthchange`, passing the object, change amount, health, and maxHealth', function () {
-        var healthchange = spy();
-        sprite.once('healthchange', healthchange).setHealth(2);
-        expect(healthchange).is.called.with.exactly(sprite, 1, 2, 100);
+      it('fires `healthchange`, passing the object, change amount, health, minHealth, and maxHealth', function () {
+        var onHealthChange = spy();
+        sprite.once('healthchange', onHealthChange).setHealth(2);
+        expect(onHealthChange).is.called.with.exactly(sprite, 1, 2, -Infinity, 100);
       });
     });
 
     context('passing health amount greater than maxHealth', function () {
-      it('sets health equal to maxHealth', function () {
-        sprite.setHealth(101);
+      it('sets health equal to maxHealth, not the greater amount', function () {
+        sprite.setMaxHealth(100).setHealth(101);
         expect(sprite.getHealth()).equals(100);
       });
 
       it('fires `healthchange`, passing the actual change amount', function () {
-        var healthchange = spy();
-        sprite.once('healthchange', healthchange).setHealth(101);
-        expect(healthchange).is.called.with.exactly(sprite, 99, 100, 100);
+        var onHealthChange = spy();
+        sprite.once('healthchange', onHealthChange).setMaxHealth(100).setHealth(101);
+        expect(onHealthChange).is.called.with.exactly(sprite, 99, 100, -Infinity, 100);
+      });
+    });
+
+    context('passing health amount less than minHealth', function () {
+      it('sets health equal to minHealth, not the lesser amount', function () {
+        sprite.setMinHealth(0).setHealth(-1);
+        expect(sprite.getHealth()).equals(0);
+      });
+
+      it('fires `healthchange`, passing the actual change amount', function () {
+        var onHealthChange = spy();
+        sprite.once('healthchange', onHealthChange).setMinHealth(0).setHealth(-1);
+        expect(onHealthChange).is.called.with.exactly(sprite, -1, 0, 0, 100);
       });
     });
 
@@ -537,37 +635,37 @@ describe('hooks', function () {
     context('passing silent = true', function () {
       it('does not fire `healthchange`', function () {
         var healthchange = spy();
-        sprite.once('healthchange', healthchange).setHealth(2, true);
+        sprite.once('healthchange', healthchange).setHealth(2, undefined, undefined, true);
         expect(healthchange).is.not.called();
       });
     });
 
-    context('heal decreases to 0', function () {
+    context('health decreases to 0', function () {
       it('fires `die`, passing the object', function () {
-        var die = spy();
-        sprite.setHealth(1).on('die', die).setHealth(0);
-        expect(die).is.called.with.exactly(sprite);
+        var onDie = spy();
+        sprite.setHealth(1).on('die', onDie).setHealth(0);
+        expect(onDie).is.called.with.exactly(sprite);
       });
     });
 
     context('health decreases below 0', function () {
       it('fires `die`, passing the object', function () {
-        var die = spy();
-        sprite.setHealth(1).on('die', die).setHealth(-1);
-        expect(die).is.called.with.exactly(sprite);
+        var onDie = spy();
+        sprite.setHealth(1).on('die', onDie).setHealth(-1);
+        expect(onDie).is.called.with.exactly(sprite);
       });
     });
 
     context('health increases above 0', function () {
       it('fires `revive`, passing the object', function () {
-        var revive = spy();
-        sprite.setHealth(-1).on('revive', revive).setHealth(1);
-        expect(revive).is.called.with.exactly(sprite);
+        var onRevive = spy();
+        sprite.setHealth(-1).on('revive', onRevive).setHealth(1);
+        expect(onRevive).is.called.with.exactly(sprite);
       });
     });
   });
 
-  describe('Health.HealthComponent#setMaxHealth()', function () {
+  describe('setMaxHealth()', function () {
     context('passing amount', function () {
       it('sets maxHealth', function () {
         sprite.setMaxHealth(2);
@@ -575,21 +673,21 @@ describe('hooks', function () {
       });
     });
 
-    context('passing amount smaller than current health', function () {
+    context('passing amount less than current health', function () {
       it('reduces health to maxHealth', function () {
         sprite.setHealth(3).setMaxHealth(2);
         expect(sprite.getHealth()).equals(2);
       });
 
-      it('fires `healthchange`, passing the object, change amount, health, and maxHealth', function () {
+      it('fires `healthchange`, passing the object, change amount, health, minHealth, and maxHealth', function () {
         var healthchange = spy();
         sprite.setHealth(3).once('healthchange', healthchange).setMaxHealth(2);
-        expect(healthchange).is.called.with.exactly(sprite, -1, 2, 2);
+        expect(healthchange).is.called.with.exactly(sprite, -1, 2, -Infinity, 2);
       });
     });
   });
 
-  describe('Health.HealthComponent#damage()', function () {
+  describe('damage()', function () {
     context('passing no amount', function () {
       it('decreases health by 1', function () {
         expect(function () { sprite.damage(); })
@@ -597,16 +695,16 @@ describe('hooks', function () {
           .by(1);
       });
 
-      it('fires `damage`, passing the object and damage amount', function () {
-        var damage = spy();
-        sprite.once('damage', damage).damage();
-        expect(damage).is.called.with.exactly(sprite, 1);
+      it('fires `damage`, passing the object and absolute damage amount', function () {
+        var onDamage = spy();
+        sprite.once('damage', onDamage).damage();
+        expect(onDamage).is.called.with.exactly(sprite, 1);
       });
 
-      it('fires `healthchange`, passing the object, change amount, health, and maxHealth', function () {
-        var healthchange = spy();
-        sprite.once('healthchange', healthchange).damage();
-        expect(healthchange).is.called.with.exactly(sprite, -1, 0, 100);
+      it('fires `healthchange`, passing the object, change amount, health, minHealth, and maxHealth', function () {
+        var onHealthChange = spy();
+        sprite.once('healthchange', onHealthChange).damage();
+        expect(onHealthChange).is.called.with.exactly(sprite, -1, 0, -Infinity, 100);
       });
     });
 
@@ -617,49 +715,63 @@ describe('hooks', function () {
           .by(2);
       });
 
-      it('fires `damage`, passing the object and damage amount', function () {
-        var damage = spy();
-        sprite.once('damage', damage).damage(2);
-        expect(damage).is.called.with.exactly(sprite, 2);
+      it('fires `damage`, passing the object and absolute damage amount', function () {
+        var onDamage = spy();
+        sprite.once('damage', onDamage).damage(2);
+        expect(onDamage).is.called.with.exactly(sprite, 2);
       });
 
-      it('fires `healthchange`, passing the object, change amount, health, and maxHealth', function () {
-        var healthchange = spy();
-        sprite.once('healthchange', healthchange).damage(2);
-        expect(healthchange).is.called.with.exactly(sprite, -2, -1, 100);
+      it('fires `healthchange`, passing the object, change amount, health, minHealth, and maxHealth', function () {
+        var onHealthChange = spy();
+        sprite.once('healthchange', onHealthChange).damage(2);
+        expect(onHealthChange).is.called.with.exactly(sprite, -2, -1, -Infinity, 100);
       });
     });
 
     context('passing amount = 0', function () {
       it('does not fire `damage`', function () {
-        var damage = spy();
-        sprite.once('damage', damage).damage(0);
-        expect(damage).is.not.called();
+        var onDamage = spy();
+        sprite.once('damage', onDamage).damage(0);
+        expect(onDamage).is.not.called();
       });
 
       it('does not fire `healthchange`', function () {
-        var healthchange = spy();
-        sprite.once('healthchange', healthchange).damage(0);
-        expect(healthchange).is.not.called();
+        var onHealthChange = spy();
+        sprite.once('healthchange', onHealthChange).damage(0);
+        expect(onHealthChange).is.not.called();
+      });
+    });
+
+    context('passing amount greater than (minHealth - health)', function () {
+      it('fires `damage` with the actual damage amount, not the greater amount', function () {
+        var onDamage = spy();
+        sprite.on('damage', onDamage).setMinHealth(0).damage(100);
+        expect(onDamage).is.called.with.exactly(sprite, 1);
+      });
+
+      it('fires `healthchange` with the actual change amount', function () {
+        var onHealthChange = spy();
+        sprite.on('healthchange', onHealthChange).setMinHealth(0).damage(100);
+        expect(onHealthChange).is.called.with.exactly(sprite, -1, 0, 0, 100);
       });
     });
 
     context('passing silent = true', function () {
       it('does not fire `damage`', function () {
-        var damage = spy();
-        sprite.once('damage', damage).damage(1, true);
-        expect(damage).is.not.called();
+        var onDamage = spy();
+        sprite.once('damage', onDamage).damage(1, true);
+        expect(onDamage).is.not.called();
       });
 
       it('does not fire `healthchange`', function () {
-        var healthchange = spy();
-        sprite.once('healthchange', healthchange).damage(1, true);
-        expect(healthchange).is.not.called();
+        var onHealthChange = spy();
+        sprite.once('healthchange', onHealthChange).damage(1, true);
+        expect(onHealthChange).is.not.called();
       });
     });
   });
 
-  describe('Health.HealthComponent#heal()', function () {
+  describe('heal()', function () {
     context('passing no amount', function () {
       it('increases health by 1', function () {
         expect(function () { sprite.heal(); })
@@ -668,14 +780,15 @@ describe('hooks', function () {
       });
 
       it('fires `heal`, passing the object and heal amount', function () {
-        var heal = spy();
-        sprite.once('heal', heal).heal();
-        expect(heal).is.called.with.exactly(sprite, 1);
+        var onHeal = spy();
+        sprite.once('heal', onHeal).heal();
+        expect(onHeal).is.called.with.exactly(sprite, 1);
       });
 
-      it('fires `heal` before health changes', function () {
+      it('fires `heal` after health changes', function () {
+        expect(sprite.getHealth()).equals(1);
         sprite.once('heal', function () {
-          expect(sprite.getHealth()).equals(1);
+          expect(sprite.getHealth()).equals(2);
         }).heal();
       });
     });
@@ -688,56 +801,56 @@ describe('hooks', function () {
       });
 
       it('fires `heal`, passing the object and heal amount', function () {
-        var heal = spy();
-        sprite.once('heal', heal).heal(2);
-        expect(heal).is.called.with.exactly(sprite, 2);
+        var onHeal = spy();
+        sprite.once('heal', onHeal).heal(2);
+        expect(onHeal).is.called.with.exactly(sprite, 2);
       });
     });
 
     context('passing amount = 0', function () {
       it('does not fire `heal`', function () {
-        var heal = spy();
-        sprite.once('heal', heal).heal(0);
-        expect(heal).is.not.called();
+        var onHeal = spy();
+        sprite.once('heal', onHeal).heal(0);
+        expect(onHeal).is.not.called();
       });
 
       it('does not fire `healthchange`', function () {
-        var healthchange = spy();
-        sprite.once('healthchange', healthchange).heal(0);
-        expect(healthchange).is.not.called();
+        var onHealthChange = spy();
+        sprite.once('healthchange', onHealthChange).heal(0);
+        expect(onHealthChange).is.not.called();
       });
     });
 
-    context('passing amount larger than (maxHealth - health)', function () {
-      it('fires `heal` with the heal amount', function () {
-        var heal = spy();
-        sprite.on('heal', heal).heal(100);
-        expect(heal).is.called.with.exactly(sprite, 100);
+    context('passing amount greater than (maxHealth - health)', function () {
+      it('fires `heal` with the actual heal amount', function () {
+        var onHeal = spy();
+        sprite.on('heal', onHeal).heal(100);
+        expect(onHeal).is.called.with.exactly(sprite, 99);
       });
 
       it('fires `healthchange` with the actual change amount', function () {
-        var healthchange = spy();
-        sprite.on('healthchange', healthchange).heal(100);
-        expect(healthchange).is.called.with.exactly(sprite, 99, 100, 100);
+        var onHealthChange = spy();
+        sprite.on('healthchange', onHealthChange).heal(100);
+        expect(onHealthChange).is.called.with.exactly(sprite, 99, 100, -Infinity, 100);
       });
     });
 
     context('passing silent = true', function () {
       it('does not fire `heal`', function () {
-        var heal = spy();
-        sprite.once('heal', heal).heal(1, true);
-        expect(heal).is.not.called();
+        var onHeal = spy();
+        sprite.once('heal', onHeal).heal(1, true);
+        expect(onHeal).is.not.called();
       });
 
       it('does not fire `healthchange`', function () {
-        var healthchange = spy();
-        sprite.once('healthchange', healthchange).heal(1, true);
-        expect(healthchange).is.not.called();
+        var onHealthChange = spy();
+        sprite.once('healthchange', onHealthChange).heal(1, true);
+        expect(onHealthChange).is.not.called();
       });
     });
   });
 
-  describe('Health.HealthComponent#kill()', function () {
+  describe('kill()', function () {
     context('when object is alive', function () {
       it('sets health to 0', function () {
         sprite.setHealth(1);
@@ -754,7 +867,7 @@ describe('hooks', function () {
     });
   });
 
-  describe('Health.HealthComponent#revive()', function () {
+  describe('revive()', function () {
     context('passing no amount', function () {
       context('when object is alive', function () {
         it('does not change health', function () {
@@ -790,7 +903,7 @@ describe('hooks', function () {
     });
   });
 
-  describe('Health.HealthComponent#reviveAtMaxHealth()', function () {
+  describe('reviveAtMaxHealth()', function () {
     context('when object is alive', function () {
       it('does not change health', function () {
         sprite.setHealth(1);
