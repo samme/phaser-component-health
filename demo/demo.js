@@ -46,7 +46,8 @@ class Elf extends Phaser.GameObjects.Sprite {
 
     this.on('animationcomplete', this.animComplete, this);
 
-    this.setMaxHealth(50).setHealth(50);
+    // (health, minHealth, maxHealth)
+    this.setHealth(50, 0, 50);
 
     this.on('die', this.onDie, this);
     this.on('revive', this.onRevive, this);
