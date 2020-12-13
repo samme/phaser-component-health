@@ -17,8 +17,8 @@ describe('Phaser', function () {
     expect(Phaser).is.an('object');
   });
 
-  it('is version 3.22.0', function () {
-    expect(Phaser).has.property('VERSION', '3.22.0');
+  it('is version 3.24.1', function () {
+    expect(Phaser).has.property('VERSION', '3.24.1');
   });
 });
 
