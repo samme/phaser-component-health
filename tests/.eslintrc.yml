@@ -1,10 +1,10 @@
 extends: '../.eslintrc.yml'
 env:
-  mocha: true
+  mocha: yes
 globals:
-  chai: false
-  Phaser: false
-  PhaserHealth: false
+  chai: readonly
+  Phaser: readonly
+  PhaserHealth: readonly
 rules:
   no-console:
     - warn
