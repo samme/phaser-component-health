@@ -1,12 +1,10 @@
 extends: semistandard
 env:
-  browser: true
-  commonjs: true
-  es6: true
+  browser: yes
+  es6: yes
 globals:
   Atomics: readonly
   SharedArrayBuffer: readonly
-  Phaser: readonly
 parserOptions:
   ecmaVersion: 2018
 rules:
