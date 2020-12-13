@@ -12,6 +12,7 @@
 - Changed: `heal` event fires after `healthchange`, for any change greater than 0
 - Added: HealthComponent.getMinHealth()
 - Added: HealthComponent.setMinHealth()
+- Fixed: import Phaser in ES module build
 
 2.0.3
 -----
