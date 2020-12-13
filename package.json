@@ -1,7 +1,7 @@
 {
   "name": "phaser-component-health",
   "version": "3.0.0",
-  "description": "Health methods and events",
+  "description": "Health methods and events for Phaser 3",
   "main": "dist/phaser-component-health.umd.js",
   "module": "dist/phaser-component-health.esm.js",
   "browser": "dist/phaser-component-health.umd.js",
