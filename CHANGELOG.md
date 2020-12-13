@@ -1,3 +1,18 @@
+3.0.0
+-----
+
+- Removed: CommonJS script. Use the UMD script (main) instead.
+- Changed: [dist](./dist) scripts
+- Changed: AddTo() arguments
+- Changed: SetHealth() arguments
+- Changed: Actions.SetHealth() arguments
+- Changed: HealthComponent.setHealth() arguments
+- Changed: `healthchange` event callback arguments
+- Changed: `damage` event fires after `healthchange`, for any change less than 0
+- Changed: `heal` event fires after `healthchange`, for any change greater than 0
+- Added: HealthComponent.getMinHealth()
+- Added: HealthComponent.setMinHealth()
+
 2.0.3
 -----
 
