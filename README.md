@@ -7,18 +7,15 @@ Examples
 --------
 
 ```javascript
-// Add component to one game object
-PhaserHealth.AddTo(sprite);
-
-// Add component to one game object and assign health=1, minHealth=0, maxHealth=2
+// Add component to *one* game object and assign health=1, minHealth=0, maxHealth=2
 PhaserHealth.AddTo(sprite, 1, 0, 2);
 
-// Same:
+// Same, in two calls:
 PhaserHealth.AddTo(sprite).setHealth(1, 0, 2);
 
 // Add component to Sprite class
 PhaserHealth.MixinTo(Phaser.GameObjects.Sprite);
-// …
+// Then set health values on a game object
 var sprite = this.add.sprite(/*…*/).setHealth(1, 0, 2);
 
 // Hide and deactivate sprite when health decreases below 0
@@ -43,7 +40,7 @@ sprite.kill();
 sprite.revive();
 ```
 
-See the [demo](./demo/index.html) as well.
+See the [demo](demo/demo.js) for more example uses.
 
 Tests
 -----
