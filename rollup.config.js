@@ -14,10 +14,6 @@ export default [
         globals: { phaser: 'Phaser' }
       },
       {
-        file: pkg.main,
-        format: 'cjs'
-      },
-      {
         file: pkg.module,
         format: 'es'
       }
