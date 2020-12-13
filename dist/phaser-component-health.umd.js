@@ -1,8 +1,10 @@
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-  typeof define === 'function' && define.amd ? define(factory) :
-  (global = global || self, global.PhaserHealth = factory());
-}(this, (function () { 'use strict';
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('phaser')) :
+  typeof define === 'function' && define.amd ? define(['phaser'], factory) :
+  (global = global || self, global.PhaserHealth = factory(global.Phaser));
+}(this, (function (Phaser) { 'use strict';
+
+  Phaser = Phaser && Phaser.hasOwnProperty('default') ? Phaser['default'] : Phaser;
 
   var DAMAGE = 'damage';
   var DIE = 'die';
@@ -10,7 +12,11 @@
   var HEALTH = 'health';
   var HEALTH_CHANGE = 'healthchange';
   var MAX_HEALTH = 'maxHealth';
+  var MIN_HEALTH = 'minHealth';
   var REVIVE = 'revive';
+
+  var ref = Phaser.Math;
+  var Clamp = ref.Clamp;
 
   var getHealth = function () {
     return this.getData(HEALTH);
@@ -20,14 +26,28 @@
     return this.getHealth() / this.getMaxHealth();
   };
 
+  var getMinHealth = function () {
+    return this.getData(MIN_HEALTH);
+  };
+
   var getMaxHealth = function () {
     return this.getData(MAX_HEALTH);
   };
 
-  var setHealth = function (health, silent) {
-    var maxHealth = this.getMaxHealth();
+  var setHealth = function (health, minHealth, maxHealth, silent) {
+    if (minHealth !== undefined) {
+      this.setMinHealth(minHealth, true);
+    }
+
+    if (maxHealth !== undefined) {
+      this.setMaxHealth(maxHealth, true);
+    }
+
+    minHealth = this.getMinHealth();
+    maxHealth = this.getMaxHealth();
+
     var prevHealth = this.getHealth();
-    var newHealth = Math.min(health, maxHealth);
+    var newHealth = Clamp(health, minHealth, maxHealth);
     var change = newHealth - prevHealth;
 
     if (change === 0) { return this; }
@@ -36,12 +56,28 @@
 
     if (silent) { return this; }
 
-    this.emit(HEALTH_CHANGE, this, change, newHealth, maxHealth);
+    this.emit(HEALTH_CHANGE, this, change, newHealth, minHealth, maxHealth);
+
+    if (change > 0) {
+      this.emit(HEAL, this, change);
+    } else {
+      this.emit(DAMAGE, this, -change);
+    }
 
     if (prevHealth > 0 && newHealth <= 0) {
       this.emit(DIE, this);
     } else if (prevHealth <= 0 && newHealth > 0) {
       this.emit(REVIVE, this);
+    }
+
+    return this;
+  };
+
+  var setMinHealth = function (amount, silent) {
+    this.setData(MIN_HEALTH, amount);
+
+    if (this.getHealth() < amount) {
+      this.setHealth(amount, silent);
     }
 
     return this;
@@ -62,11 +98,7 @@
 
     if (!amount) { amount = 1; }
 
-    if (!silent) {
-      this.emit(DAMAGE, this, amount);
-    }
-
-    this.setHealth(this.getHealth() - amount, silent);
+    this.setHealth(this.getHealth() - amount, undefined, undefined, silent);
 
     return this;
   };
@@ -76,11 +108,7 @@
 
     if (!amount) { amount = 1; }
 
-    if (!silent) {
-      this.emit(HEAL, this, amount);
-    }
-
-    this.setHealth(this.getHealth() + amount, silent);
+    this.setHealth(this.getHealth() + amount, undefined, undefined, silent);
 
     return this;
   };
@@ -119,8 +147,10 @@
     __proto__: null,
     getHealth: getHealth,
     getHealthFrac: getHealthFrac,
+    getMinHealth: getMinHealth,
     getMaxHealth: getMaxHealth,
     setHealth: setHealth,
+    setMinHealth: setMinHealth,
     setMaxHealth: setMaxHealth,
     damage: damage,
     heal: heal,
@@ -136,14 +166,19 @@
       name: obj.name,
       alive: obj.isAlive(),
       health: obj.getHealth(),
+      minHealth: obj.getMinHealth(),
       maxHealth: obj.getMaxHealth()
     };
   };
 
-  var AddTo = function (obj, health, maxHealth) {
+  var AddTo = function (obj, health, minHealth, maxHealth) {
+    if ( health === void 0 ) health = 1;
+    if ( minHealth === void 0 ) minHealth = -Infinity;
+    if ( maxHealth === void 0 ) maxHealth = 100;
+
     Object.assign(obj, HealthComponent);
 
-    SetHealth(obj, health || 1, maxHealth || 100, true);
+    SetHealth(obj, health, minHealth, maxHealth, true);
 
     return obj;
   };
@@ -184,10 +219,8 @@
     return obj.reviveAtMaxHealth(silent);
   };
 
-  var SetHealth = function (obj, health, maxHealth, silent) {
-    if (maxHealth) { obj.setMaxHealth(maxHealth); }
-
-    return obj.setHealth(health, silent);
+  var SetHealth = function (obj, health, minHealth, maxHealth, silent) {
+    return obj.setHealth(health, minHealth, maxHealth, silent);
   };
 
   var Health = /*#__PURE__*/Object.freeze({
@@ -205,8 +238,8 @@
     SetHealth: SetHealth
   });
 
-  var ref = Phaser.Utils.Array;
-  var Each = ref.Each;
+  var ref$1 = Phaser.Utils.Array;
+  var Each = ref$1.Each;
 
   var Damage$1 = function (objs, amount, silent) {
     Each(objs, Damage, null, amount, silent);
