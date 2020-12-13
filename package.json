@@ -11,11 +11,11 @@
   ],
   "scripts": {
     "build": "rollup -c",
+    "postbuild": "node -c dist/phaser-component-health.umd.js",
     "clean": "rm dist/*.js",
     "dev": "rollup -c -w",
-    "pretest": "eslint src && npm run build",
     "preversion": "npm run build && git add dist/*.js",
-    "test": "node -c dist/phaser-component-health.umd.js"
+    "test": "eslint src"
   },
   "repository": {
     "type": "git",
