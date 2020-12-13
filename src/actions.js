@@ -1,3 +1,5 @@
+import Phaser from 'phaser';
+
 import * as Health from './health';
 
 const { Each } = Phaser.Utils.Array;

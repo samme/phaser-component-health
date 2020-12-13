@@ -1,3 +1,5 @@
+import Phaser from 'phaser';
+
 import { DAMAGE, DIE, HEAL, HEALTH, HEALTH_CHANGE, MAX_HEALTH, MIN_HEALTH, REVIVE } from './const';
 
 const { Clamp } = Phaser.Math;
