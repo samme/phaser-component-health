@@ -19,25 +19,34 @@ PhaserHealth.MixinTo(Phaser.GameObjects.Sprite);
 var sprite = this.add.sprite(/*…*/).setHealth(1, 0, 2);
 
 // Hide and deactivate sprite when health decreases below 0
-sprite.on('die', function (spr) {
-  spr.setActive(false).setVisible(false);
+sprite.on('die', function (obj) {
+  obj.setActive(false).setVisible(false);
 });
 
 // Show and activate sprite when health increases above 0
-sprite.on('revive', function (spr) {
-  spr.setActive(true).setVisible(true);
+sprite.on('revive', function (obj) {
+  obj.setActive(true).setVisible(true);
 });
 
 // React to health changes
-sprite.on('healthchange', function (gameObject, amount, health, minHealth, maxHealth) {
+sprite.on('healthchange', function (obj, amount, health, minHealth, maxHealth) {
   // Health changed by ${amount}, now ${health}/${maxHealth}
 });
 
-// Modify sprite health
+// Decrease health by 1
 sprite.damage(1);
+
+// Increase health by 2
 sprite.heal(2);
+
+// Set health to 0, only if health > 0
 sprite.kill();
+
+// Set health to 1, only if health <= 0
 sprite.revive();
+
+// Set health to maximum, only if health <= 0
+sprite.reviveAtMaxHealth();
 ```
 
 See the [demo](demo/demo.js) for more example uses.
@@ -52,7 +61,7 @@ API
 
 ### Browser / UMD
 
-Use the global variable `PhaserHealth`.
+Use the [UMD script](./dist/phaser-component-health.umd.js) and the global variable `PhaserHealth`.
 
 ### Modules
 

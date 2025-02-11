@@ -2,7 +2,7 @@
 -----
 
 - Removed: CommonJS script. Use the UMD script (main) instead.
-- Changed: [dist](./dist) scripts
+- Changed: [dist](./dist) script names
 - Changed: AddTo() arguments
 - Changed: SetHealth() arguments
 - Changed: Actions.SetHealth() arguments
@@ -10,6 +10,7 @@
 - Changed: `healthchange` event callback arguments
 - Changed: `damage` event fires after `healthchange`, for any change less than 0
 - Changed: `heal` event fires after `healthchange`, for any change greater than 0
+- Added: HealthComponent.getHealthFrac()
 - Added: HealthComponent.getMinHealth()
 - Added: HealthComponent.setMinHealth()
 - Fixed: import Phaser in ES module build
