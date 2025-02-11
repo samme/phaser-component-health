@@ -1,3 +1,4 @@
+/* global Phaser, PhaserHealth */
 var BLUE = 0x00ffff;
 var GREEN = 0x22ff00;
 var RED = 0xff2200;
@@ -267,8 +268,8 @@ new Phaser.Game(config);
 function preload () {
   //  The graphics used in this example were free downloads from https://craftpix.net
   //  Check out their excellent asset packs!
-  this.load.image('background', 'assets/fairy-background-craft-pixel.png');
-  this.load.atlas('elves', 'assets/elves-craft-pixel.png', 'assets/elves-craft-pixel.json');
+  this.load.image('background', 'assets/pics/fairy-background-craft-pixel.png');
+  this.load.atlas('elves', 'assets/animations/elves-craft-pixel.png', 'assets/animations/elves-craft-pixel.json');
 }
 
 function create () {
