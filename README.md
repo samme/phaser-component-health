@@ -56,12 +56,17 @@ Tests
 
 Open [tests](./tests/index.html) in your browser.
 
-API
+Add
 ---
 
 ### Browser / UMD
 
-Use the [UMD script](./dist/phaser-component-health.umd.js) and the global variable `PhaserHealth`.
+Include the [UMD script](https://github.com/samme/phaser-component-health/blob/master/dist/phaser-component-health.umd.js) after Phaser and then use the global variable `PhaserHealth`. [The demo](https://codepen.io/samme/pen/BeyZpX) is set up this way.
+
+```html
+<script src='https://cdn.jsdelivr.net/npm/phaser@3.52.0/dist/phaser.js'></script>
+<script src='https://cdn.jsdelivr.net/npm/phaser-component-health@3.0.0/dist/phaser-component-health.umd.js'></script>
+```
 
 ### Modules
 
@@ -70,6 +75,9 @@ Use the module's default export:
 ```js
 import PhaserHealth from 'phaser-component-health';
 ```
+
+API
+---
 
 ### Static Methods
 
